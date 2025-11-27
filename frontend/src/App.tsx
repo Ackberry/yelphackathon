@@ -1,14 +1,25 @@
-import { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { SignIn, SignUp, useAuth } from '@clerk/clerk-react';
+import ProtectedRoute from './components/auth/ProtectedRoute';
+import HomePage from './pages/HomePage';
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
-    <div className="app">
-      <h1>Mood-Based Discovery</h1>
-      <p>Welcome to the mood-based place discovery application!</p>
-      <button onClick={() => setCount((count) => count + 1)}>Count is {count}</button>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/sign-in/*" element={<SignIn routing="path" path="/sign-in" />} />
+        <Route path="/sign-up/*" element={<SignUp routing="path" path="/sign-up" />} />
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <HomePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Router>
   );
 }
 
