@@ -1,23 +1,38 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import authRoutes from './routes/auth';
 import { connectDatabase } from './config/database';
+
+// Middleware
+import { errorHandler, notFoundHandler } from './middleware/errorHandler';
+import { apiLimiter } from './middleware/rateLimiter';
+
+// Routes
+import authRoutes from './routes/auth';
+import chatRoutes from './routes/chat';
+import placesRoutes from './routes/places';
+import userRoutes from './routes/user';
+import contextRoutes from './routes/context';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
+// CORS configuration
 app.use(
   cors({
     origin: process.env.FRONTEND_URL || 'http://localhost:5173',
     credentials: true,
   })
 );
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+
+// Body parsing middleware
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Apply rate limiting to all API routes
+app.use('/api', apiLimiter);
 
 // Health check endpoint
 app.get('/health', (_req, res) => {
@@ -26,21 +41,31 @@ app.get('/health', (_req, res) => {
 
 // API routes
 app.get('/api', (_req, res) => {
-  res.json({ message: 'Mood-Based Discovery API' });
-});
-
-// Auth routes
-app.use('/api/auth', authRoutes);
-
-// Error handling middleware
-app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  console.error('Unhandled error:', err);
-  res.status(500).json({
-    error: 'Internal Server Error',
-    message: err.message || 'An unexpected error occurred',
-    statusCode: 500,
+  res.json({ 
+    message: 'Mood-Based Discovery API',
+    version: '1.0.0',
+    endpoints: {
+      auth: '/api/auth',
+      chat: '/api/chat',
+      places: '/api/places',
+      user: '/api/user',
+      context: '/api/context',
+    }
   });
 });
+
+// Mount route handlers
+app.use('/api/auth', authRoutes);
+app.use('/api/chat', chatRoutes);
+app.use('/api/places', placesRoutes);
+app.use('/api/user', userRoutes);
+app.use('/api/context', contextRoutes);
+
+// 404 handler for undefined routes
+app.use(notFoundHandler);
+
+// Global error handling middleware (must be last)
+app.use(errorHandler);
 
 // Connect to database and start server
 async function startServer() {

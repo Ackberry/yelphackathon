@@ -2,7 +2,6 @@ import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
 import { User } from '../models/User';
 import { Conversation } from '../models/Conversation';
-import mongoose from 'mongoose';
 
 /**
  * Feature: mood-based-discovery, Property 24: Conversation persistence on logout

@@ -60,7 +60,7 @@ export async function requireAuth(req: AuthRequest, res: Response, next: NextFun
  * Optional authentication middleware
  * Attaches user info if token is present, but doesn't require it
  */
-export async function optionalAuth(req: AuthRequest, res: Response, next: NextFunction) {
+export async function optionalAuth(req: AuthRequest, _res: Response, next: NextFunction) {
   try {
     const authHeader = req.headers.authorization;
     
