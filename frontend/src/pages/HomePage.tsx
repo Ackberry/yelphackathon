@@ -1,12 +1,16 @@
 import { useUser, UserButton } from '@clerk/clerk-react';
 import { useState } from 'react';
 import Map from '../components/map/Map';
+import ChatInterface from '../components/chat/ChatInterface';
 import { MarkerData } from '../types/map';
 import { Coordinates } from '@shared/types/place';
+import { Message } from '@shared/types/conversation';
 
 export default function HomePage() {
   const { user, isLoaded } = useUser();
   const [markers, setMarkers] = useState<MarkerData[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleMarkerClick = (markerId: string) => {
     console.log('Marker clicked:', markerId);
@@ -22,6 +26,42 @@ export default function HomePage() {
 
   const handleMapZoom = (zoom: number) => {
     console.log('Map zoom changed to:', zoom);
+  };
+
+  const handleSendMessage = (messageText: string) => {
+    // Add user message
+    const userMessage: Message = {
+      role: 'user',
+      content: messageText,
+      timestamp: new Date(),
+    };
+    setMessages(prev => [...prev, userMessage]);
+    setIsLoading(true);
+
+    // Simulate AI response (in real implementation, this would call the backend API)
+    setTimeout(() => {
+      const aiMessage: Message = {
+        role: 'assistant',
+        content: `I understand you're looking for: ${messageText}. Here are some recommendations based on your preferences.`,
+        timestamp: new Date(),
+        recommendations: [
+          {
+            placeId: 'demo-1',
+            placeName: 'Sample Restaurant',
+            relevanceScore: 0.95,
+            reasoning: 'Great atmosphere and matches your mood',
+          },
+          {
+            placeId: 'demo-2',
+            placeName: 'Cozy Cafe',
+            relevanceScore: 0.88,
+            reasoning: 'Perfect for a relaxed vibe',
+          },
+        ],
+      };
+      setMessages(prev => [...prev, aiMessage]);
+      setIsLoading(false);
+    }, 1500);
   };
 
   if (!isLoaded) {
@@ -42,6 +82,13 @@ export default function HomePage() {
             onMapClick={handleMapClick}
             onMapPan={handleMapPan}
             onMapZoom={handleMapZoom}
+          />
+        </div>
+        <div style={{ width: '400px', display: 'flex', flexDirection: 'column' }}>
+          <ChatInterface
+            messages={messages}
+            onSendMessage={handleSendMessage}
+            isLoading={isLoading}
           />
         </div>
       </main>

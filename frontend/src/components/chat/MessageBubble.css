@@ -1,0 +1,106 @@
+.message-bubble {
+  display: flex;
+  flex-direction: column;
+  max-width: 75%;
+  animation: slideIn 0.2s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message-bubble.user {
+  align-self: flex-end;
+}
+
+.message-bubble.assistant {
+  align-self: flex-start;
+}
+
+.message-content {
+  padding: 0.75rem 1rem;
+  border-radius: 1rem;
+  word-wrap: break-word;
+}
+
+.message-bubble.user .message-content {
+  background-color: #667eea;
+  color: #ffffff;
+  border-bottom-right-radius: 0.25rem;
+}
+
+.message-bubble.assistant .message-content {
+  background-color: #ffffff;
+  color: #111827;
+  border: 1px solid #e5e7eb;
+  border-bottom-left-radius: 0.25rem;
+}
+
+.message-content p {
+  margin: 0;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.message-timestamp {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-top: 0.25rem;
+  padding: 0 0.5rem;
+}
+
+.message-bubble.user .message-timestamp {
+  text-align: right;
+}
+
+.message-bubble.assistant .message-timestamp {
+  text-align: left;
+}
+
+/* Recommendations styling */
+.recommendations {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.message-bubble.assistant .recommendations {
+  border-top-color: #e5e7eb;
+}
+
+.recommendations-header {
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.recommendation-item {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem;
+  margin: 0.25rem 0;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 0.5rem;
+}
+
+.message-bubble.user .recommendation-item {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.recommendation-name {
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.recommendation-reasoning {
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  opacity: 0.8;
+}
